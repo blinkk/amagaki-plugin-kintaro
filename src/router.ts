@@ -9,11 +9,14 @@ import {
 } from '@amagaki/amagaki';
 import {KintaroApiClient, KintaroDocument} from './kintaro';
 
+import {resolveDepth} from './utils';
+
 export interface KintaroRouteProviderOptions {
+  collectionId: string;
+  depth?: number;
+  path: string;
   projectId?: string;
   repoId: string;
-  collectionId: string;
-  path: string;
   view?: string;
 }
 
@@ -46,9 +49,6 @@ export class KintaroRouteProvider extends RouteProvider {
   }
 
   async routes(): Promise<KintaroRoute[]> {
-    console.log(
-      `Trying -> ${this.options.collectionId} in ${this.options.projectId}`
-    );
     const resp = await this.client.documents.listDocumentSummaries({
       repo_id: this.options.repoId,
       project_id: this.options.projectId,
@@ -57,10 +57,10 @@ export class KintaroRouteProvider extends RouteProvider {
     });
     const promises = [];
     for (const summaryDocument of resp.data.documents) {
-      console.log(summaryDocument);
       promises.push(
         this.client.documents.getDocument({
           collection_id: this.options.collectionId,
+          depth: this.options.depth || 4,
           document_id: summaryDocument.document_id,
           project_id: this.options.projectId,
           repo_id: this.options.repoId,
@@ -138,6 +138,7 @@ class KintaroRouteDocument {
     this._fields = this.document.content_json
       ? JSON.parse(this.document.content_json)
       : {};
+    this._fields = resolveDepth(this._fields);
     return this._fields;
   }
 

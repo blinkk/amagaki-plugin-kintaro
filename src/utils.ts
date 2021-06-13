@@ -1,6 +1,6 @@
 import * as yaml from 'js-yaml';
 
-import {Pod} from '@amagaki/amagaki';
+import {DataType, Pod} from '@amagaki/amagaki';
 
 export type KeysToStrings = Record<string, string>;
 export type KeysToLocalesToStrings = Record<string, KeysToStrings>;
@@ -61,4 +61,40 @@ export async function saveLocales(
   console.log(
     `Saved -> /locales/{${Object.keys(catalogsToMerge).sort().join('|')}}.yaml`
   );
+}
+
+const isDeepDocument = (data: any) => {
+  return (
+    data.collection_id &&
+    data.document_content &&
+    data.document_id &&
+    data.repo_id
+  );
+};
+
+export function resolveDepth(data: any): any {
+  if (!data) {
+    return data;
+  }
+
+  if (DataType.isObject(data)) {
+    if (isDeepDocument(data)) {
+      return data.document_content;
+    }
+    const newData: any = {};
+    for (const key of Object.keys(data)) {
+      newData[key] = resolveDepth(data[key]);
+    }
+    return newData;
+  }
+
+  if (DataType.isArray(data)) {
+    const newData = [];
+    for (const item of data) {
+      newData.push(resolveDepth(item));
+    }
+    return newData;
+  }
+
+  return data;
 }

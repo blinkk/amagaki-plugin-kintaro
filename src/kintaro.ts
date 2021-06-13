@@ -82,7 +82,7 @@ export class KintaroPlugin {
   constructor(pod: Pod, options: KintaroPluginOptions) {
     this.pod = pod;
     this.repoId = options.repoId;
-    this.projectId = options.repoId;
+    this.projectId = options.projectId;
     this.authPlugin = googleAuthPlugin.register(pod, {
       keyFile: options.keyFile,
     });
@@ -100,7 +100,14 @@ export class KintaroPlugin {
 
   async addRouteProvider(options: KintaroRouteProviderOptions) {
     const client = await this.getClient();
-    const provider = new KintaroRouteProvider(this.pod.router, client, options);
+    const provider = new KintaroRouteProvider(this.pod.router, client, {
+      collectionId: options.collectionId,
+      depth: options.depth,
+      path: options.path,
+      projectId: this.projectId,
+      repoId: this.repoId,
+      view: options.view,
+    });
     this.pod.router.addProvider(provider);
     return provider;
   }
