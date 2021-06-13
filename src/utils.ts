@@ -28,6 +28,9 @@ export async function saveLocales(
       catalogsToMerge[locale][baseString] = translatedString;
     }
   }
+  if (!Object.keys(catalogsToMerge).length) {
+    return;
+  }
   // TODO: Replace this code once the locale catalog format within Amagaki is
   // stable, and there are built-in methods for updating catalogs and writing
   // translations.

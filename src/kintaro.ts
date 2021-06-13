@@ -4,6 +4,7 @@ import * as utils from './utils';
 
 import {Builder, Pod} from '@amagaki/amagaki';
 import {Common, google} from 'googleapis';
+import {KintaroRouteProvider, KintaroRouteProviderOptions} from './router';
 
 import {ImportTranslationsOptions} from './translations';
 import {KeysToLocalesToStrings} from './utils';
@@ -95,6 +96,13 @@ export class KintaroPlugin {
     return await google.discoverAPI(KintaroPlugin.DISCOVERY_URL, {
       auth: this.authPlugin.authClient,
     });
+  }
+
+  async addRouteProvider(options: KintaroRouteProviderOptions) {
+    const client = await this.getClient();
+    const provider = new KintaroRouteProvider(this.pod.router, client, options);
+    this.pod.router.addProvider(provider);
+    return provider;
   }
 
   async importTranslations(options: ImportTranslationsOptions) {
