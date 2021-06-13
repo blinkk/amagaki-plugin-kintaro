@@ -53,6 +53,9 @@ export async function saveLocales(
       pod.getAbsoluteFilePath(locale.podPath),
       contentToWrite
     );
-    console.log(`Saved -> ${locale.podPath}`);
   }
+
+  console.log(
+    `Saved -> /locales/{${Object.keys(catalogsToMerge).sort().join('|')}}.yaml`
+  );
 }
