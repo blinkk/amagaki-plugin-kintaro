@@ -4,12 +4,12 @@
 [![GitHub Actions][github-image]][github-url]
 [![TypeScript Style Guide][gts-image]][gts-url]
 
-An Amagaki plugin for integration with Kintaro, a headless CMS service.
+An experimental Amagaki plugin for integration with Kintaro, a headless CMS.
 
 Features include:
 
-- **Dynamic routing**: Create Amagaki routes from Kintaro collections
-- **Translation importing**: Import Kintaro translations to Amagaki locales
+- **Dynamic routing**: Create Amagaki routes from Kintaro collections.
+- **Translation importing**: Import Kintaro translations to Amagaki locales.
 
 ## Usage
 
@@ -38,9 +38,47 @@ gcloud --project=$PROJECT \
   key.json
 ```
 
-2. Ensure the Kintaro site is shared with the service account.
-
 3. Ensure `key.json` is added to your `.gitignore`.
+
+4. Ensure the Kintaro site is shared with the service account.
+
+5. Access the plugin in `amagaki.ts`:
+
+```typescript
+import {KintaroPlugin} from '@amagaki/amagaki-plugin-kintaro';
+
+export default async (pod: Pod) => {
+  const kintaro = KintaroPlugin.register(pod, {
+    keyFile: 'key.json',
+    repoId: '<Kintaro Repo ID>',
+    projectId: '<Kintaro Project ID>',
+  });
+
+  // Create Amagaki routes from a Kintaro collection.
+  await kintaro.addRouteProvider({
+    collectionId: '<Kintaro Collection ID>',
+    path: '/posts/${doc.basename}/${doc.fields.slug}/',
+    view: '/views/base.njk',
+  });
+
+  // Import translations to your Amagaki project.
+  await kintaro.importTranslations({
+    stringKeyPatterns: [
+      '_label$',
+      '.label$',
+      '.text$',
+      '.title$',
+      '^cta_text_alt$',
+      '^description$',
+      '^headline$',
+      '^next$',
+      '^previous$',
+      '^site_name$',
+      '^title$',
+    ],
+  });
+}
+```
 
 [github-image]: https://github.com/blinkk/amagaki-plugin-kintaro/workflows/Run%20tests/badge.svg
 [github-url]: https://github.com/blinkk/amagaki-plugin-kintaro/actions

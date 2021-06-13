@@ -1,10 +1,9 @@
 import * as _colors from 'colors';
 
-import {BuilderPlugin} from '@amagaki/amagaki';
+import {BuilderPlugin, Pod, Route, ServerPlugin} from '@amagaki/amagaki';
+
 // eslint-disable-next-line node/no-unpublished-import
 import {KintaroPlugin} from '../dist';
-import {Pod} from '@amagaki/amagaki';
-import {ServerPlugin} from '@amagaki/amagaki';
 
 const setupKintaro = async (pod, kintaro) => {
   await kintaro.addRouteProvider({
@@ -14,9 +13,13 @@ const setupKintaro = async (pod, kintaro) => {
   });
   const routes = await pod.router.routes();
   console.log('\nRoutes: '.blue);
-  routes.forEach(route => {
-    console.log(`  ${route.urlPath}`);
-  });
+  routes
+    .filter((route: Route) => {
+      return route.contentType.startsWith('text');
+    })
+    .forEach((route: Route) => {
+      console.log(`  ${route.urlPath}`);
+    });
   console.log('');
 };
 

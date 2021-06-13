@@ -56,6 +56,13 @@ export class KintaroRouteProvider extends RouteProvider {
       return_json: true,
     });
     const promises = [];
+    // No documents found, no routes.
+    if (!resp.data.documents) {
+      console.warn(
+        `Warning: No routes generated for Kintaro collection "${this.options.collectionId}" in repo "${this.options.repoId}" with project "${this.options.projectId}".`
+      );
+      return [];
+    }
     for (const summaryDocument of resp.data.documents) {
       promises.push(
         this.client.documents.getDocument({
