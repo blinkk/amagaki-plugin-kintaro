@@ -63,12 +63,12 @@ export async function saveLocales(
   );
 }
 
-const isDeepDocument = (data: any) => {
-  return (
+export const isDeepDocument = (data: any) => {
+  return Boolean(
     data.collection_id &&
-    data.document_content &&
-    data.document_id &&
-    data.repo_id
+      data.document_content &&
+      data.document_id &&
+      data.repo_id
   );
 };
 
