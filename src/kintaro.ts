@@ -1,8 +1,10 @@
+import express = require('express');
+
 import * as googleAuthPlugin from './google-auth';
 import * as translations from './translations';
 import * as utils from './utils';
 
-import {Builder, Pod} from '@amagaki/amagaki';
+import {Builder, Pod, ServerPlugin} from '@amagaki/amagaki';
 import {Common, google} from 'googleapis';
 import {KintaroRouteProvider, KintaroRouteProviderOptions} from './router';
 
@@ -89,6 +91,16 @@ export class KintaroPlugin {
   }
 
   static register = (pod: Pod, options: KintaroPluginOptions) => {
+    // Mimic `?flush` behavior from other tools that integrate with Kintaro.
+    const server = pod.plugins.get('ServerPlugin') as ServerPlugin;
+    server.register(async (app: express.Express) => {
+      app.use('*', async (req, res, next) => {
+        if ('flush' in req.query) {
+          pod.cache.reset();
+        }
+        next();
+      });
+    });
     return new KintaroPlugin(pod, options);
   };
 
