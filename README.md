@@ -99,3 +99,17 @@ export default async (pod: Pod) => {
 [npm-url]: https://npmjs.org/package/@amagaki/amagaki-plugin-kintaro
 [gts-image]: https://img.shields.io/badge/code%20style-google-blueviolet.svg
 [gts-url]: https://github.com/google/gts
+
+## Features
+
+### Dynamic routing
+
+(To be documented)
+
+- Similar to other tools that integrate with Kintaro, you may use the `?flush`
+  query parameter to reset the cache. Add `?flush` to reload Kintaro content
+  without restarting the server.
+
+### Translation importing
+
+(To be documented)
