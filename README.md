@@ -45,6 +45,7 @@ gcloud --project=$PROJECT \
 5. Access the plugin in `amagaki.ts`:
 
 ```typescript
+import {BuilderPlugin, Pod, ServerPlugin} from '@amagaki/amagaki';
 import {KintaroPlugin} from '@amagaki/amagaki-plugin-kintaro';
 
 export default async (pod: Pod) => {
@@ -55,10 +56,22 @@ export default async (pod: Pod) => {
   });
 
   // Create Amagaki routes from a Kintaro collection.
-  await kintaro.addRouteProvider({
-    collectionId: '<Kintaro Collection ID>',
-    path: '/posts/${doc.basename}/${doc.fields.slug}/',
-    view: '/views/base.njk',
+  const setup = async () => {
+    await kintaro.addRouteProvider({
+      collectionId: '<Kintaro Collection ID>',
+      path: '/posts/${doc.basename}/${doc.fields.slug}/',
+      view: '/views/base.njk',
+    });
+  };
+
+  const builder = pod.plugins.get('BuilderPlugin') as BuilderPlugin;
+  builder.addBeforeBuildStep(async () => {
+    await setup();
+  });
+
+  const server = pod.plugins.get('ServerPlugin') as ServerPlugin;
+  server.register(async () => {
+    await setup();
   });
 
   // Import translations to your Amagaki project.
