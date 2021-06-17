@@ -21,14 +21,14 @@ export interface KintaroRouteProviderOptions {
   fields?: Record<string, any>;
 }
 
-interface KintaroRouteOptions {
+export interface KintaroRouteOptions {
   document: KintaroDocument;
   pathFormat: string;
   view?: string;
   fields?: Record<string, any>;
 }
 
-interface KintaroTemplateContext {
+export interface KintaroTemplateContext {
   doc: KintaroRouteDocument;
   env: Environment;
   pod: Pod;
@@ -89,7 +89,7 @@ export class KintaroRouteProvider extends RouteProvider {
   }
 }
 
-class KintaroRoute extends Route {
+export class KintaroRoute extends Route {
   fields?: Record<string, any>;
   options: KintaroRouteOptions;
   routeDoc: KintaroRouteDocument;
@@ -129,7 +129,7 @@ class KintaroRoute extends Route {
   }
 }
 
-class KintaroRouteDocument {
+export class KintaroRouteDocument {
   pod: Pod;
   document: KintaroDocument;
   private _pathFormat: string;
