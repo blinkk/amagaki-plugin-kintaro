@@ -18,12 +18,14 @@ export interface KintaroRouteProviderOptions {
   projectId?: string;
   repoId: string;
   view?: string;
+  fields?: Record<string, any>;
 }
 
 interface KintaroRouteOptions {
   document: KintaroDocument;
   pathFormat: string;
   view?: string;
+  fields?: Record<string, any>;
 }
 
 interface KintaroTemplateContext {
@@ -79,6 +81,7 @@ export class KintaroRouteProvider extends RouteProvider {
     return results.map(result => {
       return new KintaroRoute(this, {
         document: result.data as KintaroDocument,
+        fields: this.options.fields,
         pathFormat: this.options.path,
         view: this.options.view,
       });
@@ -87,6 +90,7 @@ export class KintaroRouteProvider extends RouteProvider {
 }
 
 class KintaroRoute extends Route {
+  fields?: Record<string, any>;
   options: KintaroRouteOptions;
   routeDoc: KintaroRouteDocument;
 
@@ -97,6 +101,7 @@ class KintaroRoute extends Route {
     super(provider);
     this.provider = provider;
     this.options = options;
+    this.fields = options.fields;
     this.routeDoc = new KintaroRouteDocument(this.provider.pod, {
       document: options.document,
       pathFormat: options.pathFormat,
