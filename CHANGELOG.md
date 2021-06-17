@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.1.0...v1.2.0) (2021-06-17)
+
+
+### Features
+
+* export utils to index ([277cf86](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/277cf8607a5f8aae5a529aba701e23fdecbe89cc))
+
 ## [1.1.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.0.0...v1.1.0) (2021-06-14)
 
 
