@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.2.0...v1.3.0) (2021-06-17)
+
+
+### Features
+
+* allow adding fields to routes ([c8a89bc](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/c8a89bc30a0ddf47e5b749082fb4c7578ed515c3))
+* export more objects ([4648ca4](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/4648ca4f01bde2498fdb6a5a0e14fd6c1e1dbe0a))
+
 ## [1.2.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.1.0...v1.2.0) (2021-06-17)
 
 
