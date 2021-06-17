@@ -100,6 +100,8 @@ export default async (pod: Pod) => {
 [gts-image]: https://img.shields.io/badge/code%20style-google-blueviolet.svg
 [gts-url]: https://github.com/google/gts
 
+## Features
+
 ### Dynamic routing
 
 (To be documented)
