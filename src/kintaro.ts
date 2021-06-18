@@ -5,11 +5,12 @@ import * as translations from './translations';
 import * as utils from './utils';
 
 import {Builder, Pod, ServerPlugin} from '@amagaki/amagaki';
-import {Common, google} from 'googleapis';
 import {KintaroRouteProvider, KintaroRouteProviderOptions} from './router';
 
+import {Common} from 'googleapis';
 import {ImportTranslationsOptions} from './translations';
 import {KeysToLocalesToStrings} from './utils';
+import {KintaroApiClient} from './interfaces';
 import fs from 'fs';
 import fsPath from 'path';
 import yaml from 'js-yaml';
@@ -67,19 +68,11 @@ export interface KintaroPluginOptions {
   projectId?: string;
 }
 
-export interface KintaroApiClient extends Readonly<Common.Endpoint> {
-  collections: any;
-  documents: any;
-}
-
 export class KintaroPlugin {
   authPlugin: googleAuthPlugin.GoogleAuthPlugin;
   pod: Pod;
   projectId?: string;
   repoId: string;
-
-  static DISCOVERY_URL =
-    'https://kintaro-content-server.appspot.com/_ah/api/discovery/v1/apis/content/v1/rest';
 
   constructor(pod: Pod, options: KintaroPluginOptions) {
     this.pod = pod;
@@ -105,9 +98,13 @@ export class KintaroPlugin {
   };
 
   async getClient(): Promise<KintaroApiClient> {
-    return await google.discoverAPI(KintaroPlugin.DISCOVERY_URL, {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const schema = require('./kintaro-content-v1-rest.json');
+    const ep = new Common.Endpoint({
       auth: this.authPlugin.authClient,
     });
+    ep.applySchema(ep, schema, schema, ep);
+    return (ep as unknown) as KintaroApiClient;
   }
 
   async addRouteProvider(options: KintaroRouteProviderOptions) {

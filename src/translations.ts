@@ -1,8 +1,8 @@
 import * as flat from 'flat';
 
-import {KintaroApiClient, KintaroDocument} from './kintaro';
-
 import {KeysToLocalesToStrings} from './utils';
+import {KintaroApiClient} from './interfaces';
+import {KintaroDocument} from './kintaro';
 import {Pod} from '@amagaki/amagaki';
 
 export type FlattenedKintaroDocument = Record<string, string>;

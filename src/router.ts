@@ -7,8 +7,9 @@ import {
   Url,
   interpolate,
 } from '@amagaki/amagaki';
-import {KintaroApiClient, KintaroDocument} from './kintaro';
 
+import {KintaroApiClient} from './interfaces';
+import {KintaroDocument} from './kintaro';
 import {resolveDepth} from './utils';
 
 export interface KintaroRouteProviderOptions {
