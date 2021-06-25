@@ -4,28 +4,12 @@ import * as googleAuthPlugin from './google-auth';
 import * as translations from './translations';
 import * as utils from './utils';
 
-import {Builder, Pod, ServerPlugin} from '@amagaki/amagaki';
 import {KintaroRouteProvider, KintaroRouteProviderOptions} from './router';
+import {Pod, ServerPlugin} from '@amagaki/amagaki';
 
 import {Common} from 'googleapis';
 import {ImportTranslationsOptions} from './translations';
-import {KeysToLocalesToStrings} from './utils';
 import {KintaroApiClient} from './interfaces';
-import fs from 'fs';
-import fsPath from 'path';
-import yaml from 'js-yaml';
-
-export interface SaveFileOptions {
-  podPath: string;
-  spreadsheetId: string;
-  range: string;
-}
-
-export interface BindCollectionOptions {
-  collectionPath: string;
-  spreadsheetId: string;
-  ranges: string[];
-}
 
 export interface KintaroModified {
   created_by: string;
@@ -66,6 +50,7 @@ export interface KintaroPluginOptions {
   keyFile?: string;
   repoId: string;
   projectId?: string;
+  localeAliases?: Record<string, string>;
 }
 
 export class KintaroPlugin {
@@ -73,6 +58,7 @@ export class KintaroPlugin {
   pod: Pod;
   projectId?: string;
   repoId: string;
+  localeAliases?: Record<string, string>;
 
   constructor(pod: Pod, options: KintaroPluginOptions) {
     this.pod = pod;
@@ -81,6 +67,7 @@ export class KintaroPlugin {
     this.authPlugin = googleAuthPlugin.register(pod, {
       keyFile: options.keyFile,
     });
+    this.localeAliases = options.localeAliases;
   }
 
   static register = (pod: Pod, options: KintaroPluginOptions) => {
@@ -135,7 +122,7 @@ export class KintaroPlugin {
     );
 
     console.log(`Processing ${collectionIds.length} collections`);
-    const importedKeysToLocalesToStrings: KeysToLocalesToStrings[][] = await Promise.all(
+    const importedKeysToDocumentResults: translations.ProcessDocumentResult[][] = await Promise.all(
       collectionIds.map((collectionId: string) => {
         return translations.processCollection(this.pod, client, {
           repoId: this.repoId,
@@ -143,40 +130,38 @@ export class KintaroPlugin {
           collectionId: collectionId,
           importOptions: {
             stringKeyPatterns: options.stringKeyPatterns,
+            collectionPath: options.collectionPath,
           },
         });
       })
     );
 
-    for (const collectionKeysToLocalesToStrings of importedKeysToLocalesToStrings) {
-      for (const documentKeysToLocalesToStrings of collectionKeysToLocalesToStrings) {
-        await utils.saveLocales(this.pod, documentKeysToLocalesToStrings);
+    for (const collectionKeysToDocumentResults of importedKeysToDocumentResults) {
+      for (const documentKeysToDocumentResults of collectionKeysToDocumentResults) {
+        const keysToLocalesToStrings =
+          documentKeysToDocumentResults.keysToLocalesToStrings;
+        await utils.saveLocales(this.pod, keysToLocalesToStrings, {
+          localeAliases: this.localeAliases,
+        });
+        if (
+          options.collectionPath &&
+          documentKeysToDocumentResults.keysToLocalizableData
+        ) {
+          const podPath = `${options.collectionPath}/${documentKeysToDocumentResults.collectionId}/${documentKeysToDocumentResults.documentId}.yaml`;
+          await this.saveFileInternal(
+            this.pod,
+            podPath,
+            documentKeysToDocumentResults.keysToLocalizableData
+          );
+        }
       }
     }
   }
 
-  async saveFileInternal(podPath: string, content: object) {
-    let rawContent: string;
-    if (podPath.endsWith('.json')) {
-      rawContent = JSON.stringify(content);
-    } else if (podPath.endsWith('.yaml')) {
-      rawContent = yaml.dump(content);
-    } else {
-      throw new Error(
-        `Cannot save file due to unsupported extenson -> ${podPath}`
-      );
-    }
+  async saveFileInternal(pod: Pod, podPath: string, content: object) {
+    const rawContent = pod.dumpYaml(content);
     const realPath = this.pod.getAbsoluteFilePath(podPath);
     await this.pod.builder.writeFileAsync(realPath, rawContent);
     console.log(`Saved -> ${podPath}`);
-  }
-
-  async bindCollection(options: BindCollectionOptions) {
-    const realPath = this.pod.getAbsoluteFilePath(options.collectionPath);
-    // `ensureDirectoryExists` is actually `ensureDirectoryExistsForFile`.
-    Builder.ensureDirectoryExists(fsPath.join(realPath, '_collection.yaml'));
-    fs.readdirSync(realPath).filter(path => {
-      return !path.startsWith('_');
-    });
   }
 }

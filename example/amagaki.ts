@@ -41,6 +41,7 @@ export default async (pod: Pod) => {
   });
 
   // await kintaro.importTranslations({
+  //   collectionPath: '/content/kintaro',
   //   stringKeyPatterns: [
   //     '_label$',
   //     '.label$',

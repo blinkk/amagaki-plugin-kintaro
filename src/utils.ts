@@ -1,16 +1,22 @@
 import * as yaml from 'js-yaml';
 
-import {DataType, Pod} from '@amagaki/amagaki';
+import {DataType, LocalizableData, Pod} from '@amagaki/amagaki';
 
 export type KeysToStrings = Record<string, string>;
 export type KeysToLocalesToStrings = Record<string, KeysToStrings>;
+export type KeysToLocalizableData = Record<string, LocalizableData>;
+
+export interface SaveLocalesOptions {
+  localeAliases?: Record<string, string>;
+}
 
 /**
  * Updates the pod's locale files with translations retrieved from the sheet.
  */
 export async function saveLocales(
   pod: Pod,
-  keysToLocales: KeysToLocalesToStrings
+  keysToLocales: KeysToLocalesToStrings,
+  options?: SaveLocalesOptions
 ) {
   type Catalog = Record<string, string>;
   type LocalesToCatalogs = Record<string, Catalog>;
@@ -21,7 +27,14 @@ export async function saveLocales(
     if (!baseString) {
       continue;
     }
-    for (const [locale, translatedString] of Object.entries(localesToStrings)) {
+    for (const [externalLocale, translatedString] of Object.entries(
+      localesToStrings
+    )) {
+      let locale = externalLocale;
+      // Convert Kintaro locales to internal locales.
+      if (options?.localeAliases && options.localeAliases[locale]) {
+        locale = options.localeAliases[locale];
+      }
       if (!catalogsToMerge[locale]) {
         catalogsToMerge[locale] = {};
       }

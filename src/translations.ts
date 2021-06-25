@@ -1,13 +1,15 @@
 import * as flat from 'flat';
 
-import {KeysToLocalesToStrings} from './utils';
+import {KeysToLocalesToStrings, KeysToLocalizableData} from './utils';
+import {LocalizableData, Pod} from '@amagaki/amagaki';
+
 import {KintaroApiClient} from './interfaces';
 import {KintaroDocument} from './kintaro';
-import {Pod} from '@amagaki/amagaki';
 
 export type FlattenedKintaroDocument = Record<string, string>;
 
 export interface ImportTranslationsOptions {
+  collectionPath?: string;
   stringKeyPatterns: string[];
 }
 
@@ -24,6 +26,13 @@ export interface ProcessDocumentOptions {
   collectionId: string;
   documentId: string;
   importOptions: ImportTranslationsOptions;
+}
+
+export interface ProcessDocumentResult {
+  collectionId: string;
+  documentId: string;
+  keysToLocalesToStrings: KeysToLocalesToStrings;
+  keysToLocalizableData: Record<string, LocalizableData>;
 }
 
 export const processCollection = async (
@@ -63,7 +72,7 @@ export const processDocument = async (
   pod: Pod,
   client: KintaroApiClient,
   options: ProcessDocumentOptions
-) => {
+): Promise<ProcessDocumentResult> => {
   const resp = await client.documents.getDocument({
     repo_id: options.repoId,
     project_id: options.projectId,
@@ -118,13 +127,24 @@ export const processDocument = async (
   };
 
   const keysToLocalesToStrings: KeysToLocalesToStrings = {};
+  const keysToLocalizableData: KeysToLocalizableData = {};
   for (const [key, val] of Object.entries(keysToLocales)) {
     if (isTranslationString(key)) {
       keysToLocalesToStrings[key] = val;
     } else {
-      console.log(`Skipped key -> ${key} (${Object.values(val)[0]})`);
+      if (options.collectionId) {
+        const localizableData = new LocalizableData(pod, val);
+        keysToLocalizableData[key] = localizableData;
+      } else {
+        console.log(`Skipped key -> ${key} (${Object.values(val)[0]})`);
+      }
     }
   }
 
-  return keysToLocalesToStrings;
+  return {
+    documentId: options.documentId,
+    collectionId: options.collectionId,
+    keysToLocalesToStrings: keysToLocalesToStrings,
+    keysToLocalizableData: keysToLocalizableData,
+  };
 };
