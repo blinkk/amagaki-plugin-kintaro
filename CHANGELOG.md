@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.3.0...v1.4.0) (2021-06-25)
+
+
+### Features
+
+* add ability to download non-string data ([774f686](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/774f686fd2d219219b898247b46a415c4f776e9d))
+* use cached discovery document to reduce requests ([c90fda5](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/c90fda5ccf4492ffb52ef1b06d886000351d6dc5))
+
 ## [1.3.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.2.0...v1.3.0) (2021-06-17)
 
 
