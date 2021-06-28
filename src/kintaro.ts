@@ -110,16 +110,19 @@ export class KintaroPlugin {
 
   async importTranslations(options: ImportTranslationsOptions) {
     const client = await this.getClient();
-    const items = await client.collections.listCollections({
-      repo_id: this.repoId,
-      project_id: this.projectId,
-      use_json: true,
-    });
-    const collectionIds = items.data.collections.map(
-      (item: KintaroCollection) => {
+    let collectionIds;
+    if (options.collectionIds) {
+      collectionIds = options.collectionIds;
+    } else {
+      const items = await client.collections.listCollections({
+        repo_id: this.repoId,
+        project_id: this.projectId,
+        use_json: true,
+      });
+      collectionIds = items.data.collections.map((item: KintaroCollection) => {
         return item.collection_id;
-      }
-    );
+      });
+    }
 
     console.log(`Processing ${collectionIds.length} collections`);
     const importedKeysToDocumentResults: translations.ProcessDocumentResult[][] = await Promise.all(

@@ -10,6 +10,7 @@ export type FlattenedKintaroDocument = Record<string, string>;
 
 export interface ImportTranslationsOptions {
   collectionPath?: string;
+  collectionIds?: string[];
   stringKeyPatterns: string[];
 }
 
