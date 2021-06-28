@@ -60,6 +60,8 @@ export class KintaroPlugin {
   repoId: string;
   localeAliases?: Record<string, string>;
 
+  static NUM_CONCURRENT_REQUESTS = 20;
+
   constructor(pod: Pod, options: KintaroPluginOptions) {
     this.pod = pod;
     this.repoId = options.repoId;

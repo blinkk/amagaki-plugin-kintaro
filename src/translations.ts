@@ -1,10 +1,11 @@
-import * as flat from 'flat';
+import * as async from 'async';
 
 import {KeysToLocalesToStrings, KeysToLocalizableData} from './utils';
+import {KintaroDocument, KintaroPlugin} from './kintaro';
 import {LocalizableData, Pod} from '@amagaki/amagaki';
 
 import {KintaroApiClient} from './interfaces';
-import {KintaroDocument} from './kintaro';
+import flat from 'flat';
 
 export type FlattenedKintaroDocument = Record<string, string>;
 
@@ -56,17 +57,23 @@ export const processCollection = async (
     return item.document_id;
   });
 
-  return await Promise.all(
-    documentIds.map((documentId: string) => {
-      return processDocument(pod, client, {
-        collectionId: options.collectionId,
-        documentId: documentId,
-        importOptions: options.importOptions,
-        projectId: options.projectId,
-        repoId: options.repoId,
-      });
-    })
+  const results: ProcessDocumentResult[] = [];
+  await async.mapLimit(
+    documentIds,
+    KintaroPlugin.NUM_CONCURRENT_REQUESTS,
+    async (documentId: string) => {
+      results.push(
+        await processDocument(pod, client, {
+          collectionId: options.collectionId,
+          documentId: documentId,
+          importOptions: options.importOptions,
+          projectId: options.projectId,
+          repoId: options.repoId,
+        })
+      );
+    }
   );
+  return results;
 };
 
 export const processDocument = async (
@@ -94,17 +101,23 @@ export const processDocument = async (
   }
 
   const locales = data.snapshot_locales;
-  const resps = await Promise.all(
-    locales.map(locale => {
-      return client.documents.getDocument({
-        repo_id: options.repoId,
-        project_id: options.projectId,
-        use_json: true,
-        document_id: options.documentId,
-        collection_id: options.collectionId,
-        locale: locale,
-      });
-    })
+
+  const resps: any = [];
+  await async.mapLimit(
+    locales,
+    KintaroPlugin.NUM_CONCURRENT_REQUESTS,
+    async (locale: string) => {
+      resps.push(
+        await client.documents.getDocument({
+          repo_id: options.repoId,
+          project_id: options.projectId,
+          use_json: true,
+          document_id: options.documentId,
+          collection_id: options.collectionId,
+          locale: locale,
+        })
+      );
+    }
   );
 
   for (const resp of resps) {
