@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.4.0...v1.5.0) (2021-06-28)
+
+
+### Features
+
+* allow limiting collections on translation import ([3c5d9a0](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/3c5d9a0f4e509784f41b74f673aa8fc2c9b5aff4))
+
 ## [1.4.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.3.0...v1.4.0) (2021-06-25)
 
 
