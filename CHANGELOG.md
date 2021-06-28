@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.5.1](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.5.0...v1.5.1) (2021-06-28)
+
+
+### Bug Fixes
+
+* limit concurrent requests ([fbf41ee](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/fbf41eeec19e84cf7d51585802838f8cc0efd9f2))
+
 ## [1.5.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.4.0...v1.5.0) (2021-06-28)
 
 
