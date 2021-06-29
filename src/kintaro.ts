@@ -10,6 +10,7 @@ import {Pod, ServerPlugin} from '@amagaki/amagaki';
 import {Common} from 'googleapis';
 import {ImportTranslationsOptions} from './translations';
 import {KintaroApiClient} from './interfaces';
+import async from 'async';
 
 export interface KintaroModified {
   created_by: string;
@@ -127,9 +128,12 @@ export class KintaroPlugin {
     }
 
     console.log(`Processing ${collectionIds.length} collections`);
-    const importedKeysToDocumentResults: translations.ProcessDocumentResult[][] = await Promise.all(
-      collectionIds.map((collectionId: string) => {
-        return translations.processCollection(this.pod, client, {
+    const importedKeysToDocumentResults: translations.ProcessDocumentResult[][] = [];
+    await async.mapLimit(
+      collectionIds,
+      KintaroPlugin.NUM_CONCURRENT_REQUESTS,
+      async (collectionId: string) => {
+        const result = await translations.processCollection(this.pod, client, {
           repoId: this.repoId,
           projectId: this.projectId,
           collectionId: collectionId,
@@ -138,7 +142,8 @@ export class KintaroPlugin {
             collectionPath: options.collectionPath,
           },
         });
-      })
+        result && importedKeysToDocumentResults.push(result);
+      }
     );
 
     for (const collectionKeysToDocumentResults of importedKeysToDocumentResults) {
