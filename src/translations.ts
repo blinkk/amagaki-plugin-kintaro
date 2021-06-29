@@ -12,7 +12,7 @@ export type FlattenedKintaroDocument = Record<string, string>;
 export interface ImportTranslationsOptions {
   collectionPath?: string;
   collectionIds?: string[];
-  stringKeyPatterns: string[];
+  stringKeyPatterns?: string[];
 }
 
 export interface ProcessCollectionOptions {
@@ -44,10 +44,10 @@ export const processCollection = async (
 ) => {
   console.log(`Processing ${options.collectionId}`);
   const subItems = await client.documents.listDocumentSummaries({
-    repo_id: options.repoId,
-    project_id: options.projectId,
-    use_json: true,
     collection_id: options.collectionId,
+    project_id: options.projectId,
+    repo_id: options.repoId,
+    use_json: true,
   });
   if (!subItems.data.documents) {
     return;
@@ -135,9 +135,12 @@ export const processDocument = async (
   }
 
   const isTranslationString = (key: string) => {
-    return key.match(
-      new RegExp(options.importOptions.stringKeyPatterns.join('|'))
-    );
+    if (options.importOptions.stringKeyPatterns) {
+      return key.match(
+        new RegExp(options.importOptions.stringKeyPatterns.join('|'))
+      );
+    }
+    return false;
   };
 
   const keysToLocalesToStrings: KeysToLocalesToStrings = {};

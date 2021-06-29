@@ -111,21 +111,40 @@ export class KintaroPlugin {
     return provider;
   }
 
-  async importTranslations(options: ImportTranslationsOptions) {
+  async importTranslations(options?: ImportTranslationsOptions) {
     const client = await this.getClient();
     let collectionIds;
-    if (options.collectionIds) {
-      collectionIds = options.collectionIds;
+
+    const stringKeyPatterns = options?.stringKeyPatterns || [];
+
+    if (options?.collectionIds) {
+      collectionIds = options?.collectionIds;
     } else {
       const items = await client.collections.listCollections({
-        repo_id: this.repoId,
         project_id: this.projectId,
+        repo_id: this.repoId,
         use_json: true,
+        requestBody: {
+          include_schema: true,
+        },
       });
       collectionIds = items.data.collections.map((item: KintaroCollection) => {
         return item.collection_id;
       });
+      // Determine fields to translate from schema.
+      if (!options?.stringKeyPatterns) {
+        for (const collection of items.data.collections) {
+          for (const field of collection.schema.schema_fields) {
+            const pattern = `^${field.name}$`;
+            if (field.translatable && !stringKeyPatterns.includes(pattern)) {
+              stringKeyPatterns.push(pattern);
+            }
+          }
+        }
+      }
     }
+
+    console.log(stringKeyPatterns);
 
     console.log(`Processing ${collectionIds.length} collections`);
     const importedKeysToDocumentResults: translations.ProcessDocumentResult[][] = [];
@@ -138,8 +157,8 @@ export class KintaroPlugin {
           projectId: this.projectId,
           collectionId: collectionId,
           importOptions: {
-            stringKeyPatterns: options.stringKeyPatterns,
-            collectionPath: options.collectionPath,
+            stringKeyPatterns: stringKeyPatterns,
+            collectionPath: options?.collectionPath,
           },
         });
         result && importedKeysToDocumentResults.push(result);
@@ -154,10 +173,10 @@ export class KintaroPlugin {
           localeAliases: this.localeAliases,
         });
         if (
-          options.collectionPath &&
+          options?.collectionPath &&
           documentKeysToDocumentResults.keysToLocalizableData
         ) {
-          const podPath = `${options.collectionPath}/${documentKeysToDocumentResults.collectionId}/${documentKeysToDocumentResults.documentId}.yaml`;
+          const podPath = `${options?.collectionPath}/${documentKeysToDocumentResults.collectionId}/${documentKeysToDocumentResults.documentId}.yaml`;
           await this.saveFileInternal(
             this.pod,
             podPath,
