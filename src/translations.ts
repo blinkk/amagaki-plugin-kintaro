@@ -43,7 +43,7 @@ export const processCollection = async (
   options: ProcessCollectionOptions
 ) => {
   console.log(`Processing ${options.collectionId}`);
-  const subItems = await client.documents.listDocuments({
+  const subItems = await client.documents.listDocumentSummaries({
     repo_id: options.repoId,
     project_id: options.projectId,
     use_json: true,
