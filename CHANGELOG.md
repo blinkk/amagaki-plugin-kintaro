@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.6.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.5.1...v1.6.0) (2021-09-10)
+
+
+### Features
+
+* support using schema to indicate translatable fields ([91c504b](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/91c504b091495d0e2e25d8c41eaa5d8d705c30cf))
+
+
+### Bug Fixes
+
+* issue with multiple concurrent clients ([f09cb77](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/f09cb77cceb6768cf3bc211ef5071f4fa47b649a))
+* throttle collection requests ([63c94d8](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/63c94d8b861532a85491f8351a8f5244f5fadf3c))
+* use listDocumentSummaries to avoid server-side depth issue ([d28a1a6](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/d28a1a6d1851865a95b189f03aa032da3c320c46))
+
 ### [1.5.1](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.5.0...v1.5.1) (2021-06-28)
 
 
