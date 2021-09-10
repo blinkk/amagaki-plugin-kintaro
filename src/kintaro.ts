@@ -60,6 +60,7 @@ export class KintaroPlugin {
   projectId?: string;
   repoId: string;
   localeAliases?: Record<string, string>;
+  private client?: KintaroApiClient;
 
   static NUM_CONCURRENT_REQUESTS = 20;
 
@@ -88,13 +89,17 @@ export class KintaroPlugin {
   };
 
   async getClient(): Promise<KintaroApiClient> {
+    if (this.client) {
+      return this.client;
+    }
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const schema = require('./kintaro-content-v1-rest.json');
     const ep = new Common.Endpoint({
       auth: this.authPlugin.authClient,
     });
     ep.applySchema(ep, schema, schema, ep);
-    return (ep as unknown) as KintaroApiClient;
+    this.client = (ep as unknown) as KintaroApiClient;
+    return this.client;
   }
 
   async addRouteProvider(options: KintaroRouteProviderOptions) {
