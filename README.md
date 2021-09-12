@@ -19,30 +19,9 @@ Features include:
 npm install --save @amagaki/amagaki-plugin-kintaro
 ```
 
-2. Acquire a service account key file. You can do this interactively, from the
-   IAM section of the Google Cloud Console, or you can do this via the `gcloud`
-   CLI (see below for an example).
+2. Authenticate. See [authentication](#authentication) for details.
 
-```shell
-PROJECT=<Google Cloud Project ID>
-
-# Create a service account named `amagaki`.
-gcloud --project=$PROJECT \
-  iam service-accounts create \
-  amagaki
-
-# Create a JSON key and download it to `key.json`.
-gcloud --project=$PROJECT \
-  iam service-accounts keys create \
-  --iam-account amagaki@$PROJECT.iam.gserviceaccount.com \
-  key.json
-```
-
-3. Ensure `key.json` is added to your `.gitignore`.
-
-4. Ensure the Kintaro site is shared with the service account.
-
-5. Access the plugin in `amagaki.ts`:
+3. Access the plugin in `amagaki.ts`:
 
 ```typescript
 import {BuilderPlugin, Pod, ServerPlugin} from '@amagaki/amagaki';
@@ -50,7 +29,6 @@ import {KintaroPlugin} from '@amagaki/amagaki-plugin-kintaro';
 
 export default async (pod: Pod) => {
   const kintaro = KintaroPlugin.register(pod, {
-    keyFile: 'key.json',
     repoId: '<Kintaro Repo ID>',
     projectId: '<Kintaro Project ID>',
   });
@@ -113,3 +91,54 @@ export default async (pod: Pod) => {
 ### Translation importing
 
 (To be documented)
+
+## Authentication
+
+There are two ways to authenticate. We recommend using the application default
+identity (option 1), but using a service account key file is acceptable as well.
+
+### Option 1: Using application default credentials
+
+
+1. Install the `gcloud SDK`. [See instructions](https://cloud.google.com/sdk/docs/downloads-interactive).
+2. Login and set the application default credentials. Ensure you provide the required scopes.
+
+```bash
+gcloud auth application-default login \
+  --scopes=openid,https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/spreadsheets,https://www.googleapis.com/auth/kintaro
+```
+
+3. That's it! Now, Amagaki will use the signed in Google Account to fetch content.
+
+### Option 2: Using a service account key file
+
+
+1. Acquire a service account key file. You can do this interactively, from the IAM section of the Google Cloud Console, or you can do this via the `gcloud` CLI (see below for an example).
+
+```
+PROJECT=<Google Cloud Project ID>
+
+# Create a service account named `amagaki`.
+gcloud --project=$PROJECT \
+  iam service-accounts create \
+  amagaki
+
+# Create a JSON key and download it to `key.json`.
+gcloud --project=$PROJECT \
+  iam service-accounts keys create \
+  --iam-account amagaki@$PROJECT.iam.gserviceaccount.com \
+  key.json
+```
+
+2. Ensure `key.json` is added to your `.gitignore`.
+3. Ensure Kintaro (workspace) is shared with the service account. Service
+   accounts that have never accessed Kintaro before must be whitelisted.
+4. Pass `keyFile` to the plugin.
+
+```typescript
+KintaroPlugin.register(pod, {
+  keyFile: 'key.json',
+  repoId: '<Kintaro Repo ID>',
+  projectId: '<Kintaro Project ID>',
+});
+```
