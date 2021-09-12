@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.6.1](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.6.0...v1.6.1) (2021-09-12)
+
+
+### Miscellaneous Chores
+
+* release 1.6.1 ([3590adb](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/3590adb29fbe7bc4b5802b4249b01004b5b4c570))
+
 ## [1.6.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.5.1...v1.6.0) (2021-09-10)
 
 
