@@ -52,21 +52,33 @@ export class KintaroRouteProvider extends RouteProvider {
   }
 
   async routes(): Promise<KintaroRoute[]> {
-    const resp = await this.client.documents.listDocumentSummaries({
-      repo_id: this.options.repoId,
-      project_id: this.options.projectId,
-      collection_id: this.options.collectionId,
-      return_json: true,
-    });
+    let hasMoreResults = true;
+    let offset = 0;
+    const documents = [];
+    while (hasMoreResults) {
+      const resp = await this.client.documents.listDocumentSummaries({
+        repo_id: this.options.repoId,
+        project_id: this.options.projectId,
+        collection_id: this.options.collectionId,
+        return_json: true,
+        offset: offset,
+      });
+      if (resp.data?.documents) {
+        documents.push(...resp.data.documents);
+        offset += 100;
+      } else {
+        hasMoreResults = false;
+      }
+    }
     const promises = [];
     // No documents found, no routes.
-    if (!resp.data.documents) {
+    if (!documents.length) {
       console.warn(
         `Warning: No routes generated for Kintaro collection "${this.options.collectionId}" in repo "${this.options.repoId}" with project "${this.options.projectId}".`
       );
       return [];
     }
-    for (const summaryDocument of resp.data.documents) {
+    for (const summaryDocument of documents) {
       promises.push(
         this.client.documents.getDocument({
           collection_id: this.options.collectionId,
