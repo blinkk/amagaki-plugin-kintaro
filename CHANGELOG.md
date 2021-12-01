@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.6.1...v1.7.0) (2021-12-01)
+
+
+### Features
+
+* paginate listDocumentSummaries ([ae82a3d](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/ae82a3d9d299a8b1751e8669b0df3ba271cc43ef))
+
 ### [1.6.1](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.6.0...v1.6.1) (2021-09-12)
 
 
