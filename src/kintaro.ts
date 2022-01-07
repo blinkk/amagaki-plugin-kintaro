@@ -145,8 +145,8 @@ export class KintaroPlugin {
         // If it is, fetch only the collections defined in the options.collections
         // list.
         if (
-          options?.collections?.length >= 1 &&
-          !options.collections.includes(collectionId)
+          options?.collections &&
+          !options?.collections?.includes(collectionId)
         ) {
           return;
         }
