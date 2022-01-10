@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.7.0...v1.8.0) (2022-01-10)
+
+
+### Features
+
+* add bind collection ([38ed436](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/38ed43658d4f92c72be1997ce1d9e88a59e1a008))
+
 ## [1.7.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.6.1...v1.7.0) (2021-12-01)
 
 
