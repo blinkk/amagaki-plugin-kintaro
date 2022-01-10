@@ -16,6 +16,7 @@ export interface KintaroBindCollectionOptions {
   collectionPath: string;
   collections?: string[];
   verbose?: boolean;
+  depth: number;
 }
 
 export interface KintaroModified {
@@ -162,7 +163,7 @@ export class KintaroPlugin {
             repo_id: this.repoId,
             project_id: this.projectId,
             requestBody: {
-              depth: 2,
+              depth: options.depth || 2,
               result_options: {
                 offset: offset,
                 return_json: true,
