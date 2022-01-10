@@ -33,6 +33,13 @@ export default async (pod: Pod) => {
     projectId: '<Kintaro Project ID>',
   });
 
+
+  // Download and bind kintaro collections
+  await kintaro.bindCollection({
+    collectionPath: '<Path to download kintaro collections>'
+  });
+
+
   // Create Amagaki routes from a Kintaro collection.
   const setup = async () => {
     await kintaro.addRouteProvider({

@@ -12,6 +12,13 @@ import {ImportTranslationsOptions} from './translations';
 import {KintaroApiClient} from './interfaces';
 import async from 'async';
 
+export interface KintaroBindCollectionOptions {
+  collectionPath: string;
+  collections?: string[];
+  verbose?: boolean;
+  depth?: number;
+}
+
 export interface KintaroModified {
   created_by: string;
   created_on_millis: string;
@@ -114,6 +121,74 @@ export class KintaroPlugin {
     });
     this.pod.router.addProvider(provider);
     return provider;
+  }
+
+  async bindCollection(options: KintaroBindCollectionOptions) {
+    const client = await this.getClient();
+    const items = await client.collections.listCollections({
+      project_id: this.projectId,
+      repo_id: this.repoId,
+      use_json: true,
+      requestBody: {
+        include_schema: true,
+      },
+    });
+
+    const collectionIds = items.data.collections.map(
+      (item: KintaroCollection) => {
+        return item.collection_id;
+      }
+    );
+
+    try {
+      collectionIds.forEach(async (collectionId: string) => {
+        // Fetch all collections if options.collections is not defined.
+        // If it is, fetch only the collections defined in the options.collections
+        // list.
+        if (
+          options?.collections &&
+          !options?.collections?.includes(collectionId)
+        ) {
+          return;
+        }
+
+        const documentList = [];
+        let hasMoreResults = true;
+        let offset = 0;
+        // Kintaro returns results in pages of 100; paginate until
+        // no more results are found.
+        while (hasMoreResults) {
+          const resp = await client.documents.searchDocuments({
+            collection_id: collectionId,
+            repo_id: this.repoId,
+            project_id: this.projectId,
+            requestBody: {
+              depth: options.depth || 2,
+              result_options: {
+                offset: offset,
+                return_json: true,
+              },
+            },
+          });
+          if (resp.data?.document_list?.documents) {
+            documentList.push(...resp.data.document_list.documents);
+            offset += 100;
+          } else {
+            hasMoreResults = false;
+          }
+        }
+        documentList.forEach(async document => {
+          const podPath = `${options.collectionPath}/${document.collection_id}/${document.document_id}.yaml`;
+          const data = JSON.parse(document.content_json);
+          if (options.verbose) {
+            console.log('saved', podPath);
+          }
+          await this.saveFileInternal(this.pod, podPath, data);
+        });
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   async importTranslations(options?: ImportTranslationsOptions) {
