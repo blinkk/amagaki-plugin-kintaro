@@ -180,10 +180,7 @@ export class KintaroPlugin {
         documentList.forEach(async document => {
           const podPath = `${options.collectionPath}/${document.collection_id}/${document.document_id}.yaml`;
           const data = JSON.parse(document.content_json);
-          if (options.verbose) {
-            console.log('saved', podPath);
-          }
-          await this.saveFileInternal(this.pod, podPath, data);
+          await this.saveFileInternal(this.pod, podPath, data, options.verbose);
         });
       });
     } catch (err) {
@@ -267,10 +264,17 @@ export class KintaroPlugin {
     }
   }
 
-  async saveFileInternal(pod: Pod, podPath: string, content: object) {
+  async saveFileInternal(
+    pod: Pod,
+    podPath: string,
+    content: object,
+    verbose = false
+  ) {
     const rawContent = pod.dumpYaml(content);
     const realPath = this.pod.getAbsoluteFilePath(podPath);
     await this.pod.builder.writeFileAsync(realPath, rawContent);
-    console.log(`Saved -> ${podPath}`);
+    if (verbose) {
+      console.log(`Saved -> ${podPath}`);
+    }
   }
 }
