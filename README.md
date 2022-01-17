@@ -27,18 +27,23 @@ npm install --save @amagaki/amagaki-plugin-kintaro
 import {BuilderPlugin, Pod, ServerPlugin} from '@amagaki/amagaki';
 import {KintaroPlugin} from '@amagaki/amagaki-plugin-kintaro';
 
-export default async (pod: Pod) => {
+export default (pod: Pod) => {
   const kintaro = KintaroPlugin.register(pod, {
     repoId: '<Kintaro Repo ID>',
     projectId: '<Kintaro Project ID>',
   });
 
-
   // Download and bind kintaro collections
-  await kintaro.bindCollection({
-    collectionPath: '<Path to download kintaro collections>'
-  });
-
+  const serverPlugin = pod.plugins.get('ServerPlugin') as ServerPlugin;
+  serverPlugin.register(async () => {
+    try {
+      await kintaro.bindCollection({
+        collectionPath: '/content/kintaro/',
+      });
+    } catch (err) {
+      console.warn(`[Kintaro Plugin] Unable to download; ${err}`);
+    }
+  })
 
   // Create Amagaki routes from a Kintaro collection.
   const setup = async () => {
