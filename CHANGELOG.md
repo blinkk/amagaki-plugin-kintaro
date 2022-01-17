@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.8.1](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.8.0...v1.8.1) (2022-01-17)
+
+
+### Bug Fixes
+
+* verbose output ([12b6b9f](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/12b6b9fd30bf2327ace8683b32640c7ef266ccab))
+
 ## [1.8.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.7.0...v1.8.0) (2022-01-10)
 
 
