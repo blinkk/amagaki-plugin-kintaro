@@ -43,7 +43,7 @@ export default (pod: Pod) => {
     } catch (err) {
       console.warn(`[Kintaro Plugin] Unable to download; ${err}`);
     }
-  })
+  });
 
   // Create Amagaki routes from a Kintaro collection.
   const setup = async () => {
@@ -80,7 +80,7 @@ export default (pod: Pod) => {
       '^title$',
     ],
   });
-}
+};
 ```
 
 [github-image]: https://github.com/blinkk/amagaki-plugin-kintaro/workflows/Run%20tests/badge.svg
@@ -111,7 +111,6 @@ identity (option 1), but using a service account key file is acceptable as well.
 
 ### Option 1: Using application default credentials
 
-
 1. Install the `gcloud SDK`. [See instructions](https://cloud.google.com/sdk/docs/downloads-interactive).
 2. Login and set the application default credentials. Ensure you provide the required scopes.
 
@@ -123,7 +122,6 @@ gcloud auth application-default login \
 3. That's it! Now, Amagaki will use the signed in Google Account to fetch content.
 
 ### Option 2: Using a service account key file
-
 
 1. Acquire a service account key file. You can do this interactively, from the IAM section of the Google Cloud Console, or you can do this via the `gcloud` CLI (see below for an example).
 
@@ -154,3 +152,73 @@ KintaroPlugin.register(pod, {
   projectId: '<Kintaro Project ID>',
 });
 ```
+
+## Simulate webhooks
+
+Kintaro does not support webhooks – as a result there is no inbuilt way to run
+builds when a workspace is published. As a workaround, you can deploy a Google
+Cloud Function to poll Kintaro for the last time a workspace was published. When
+a publish event is observed via the polling mechanism, a new cloud build is
+submitted.
+
+### Configuration
+
+Ensure the following permissions are configured:
+
+1. The Cloud Function must be able to:
+   1. Read Kintaro
+   2. Read/write Cloud Datastore
+   3. Submit Cloud Builds
+2. The Cloud Build must be able to:
+   1. Read Kintaro
+3. The Cloud Scheduler task must be able to:
+   1. Invoke the Cloud Function
+
+### Usage
+
+1. Create a `apps/kintaro-webhook-simulator/index.js`:
+
+```javascript
+import {WebhookSimulator} from '@amagaki/amagaki-plugin-kintaro';
+import functions from '@google-cloud/functions-framework';
+
+functions.http('syncKintaroRepoStatus', WebhookSimulator.getCloudFunction({
+  branchName: '<string>';
+  gcpProject: '<string | undefined>';
+  kintaroProjectId: '<string | undefined>';
+  kintaroRepoId: '<string>';
+  buildTriggerId: '<string>';
+})
+```
+
+2. Create a `apps/kintaro-webhook-simulator/package.json`:
+
+```
+{
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "@amagaki/amagaki-plugin-kintaro": "^1.8.1",
+    "@google-cloud/functions-framework": "^3.0.0",
+  }
+}
+```
+
+3. Deploy the Cloud Function using the `gcloud` CLI:
+
+```
+gcloud functions deploy \
+  syncKintaroRepoStatus \
+  --runtime nodejs16 \
+  --trigger-http
+```
+
+4. Create a Cloud Scheduler task that runs the function every minute.
+
+Use the following configuration:
+
+- **Frequency:** `* * * * *`
+- **Target type:** `http`
+- **URL:** `https://us-central1-<GCP PROJECT ID>.cloudfunctions.net/syncKintaroRepoStatus`
+- **HTTP method:** `GET`
+- **Auth header:** `Add OIDC token`

@@ -19,16 +19,17 @@ export interface KintaroBindCollectionOptions {
   depth?: number;
 }
 
-export interface KintaroModified {
+export interface ModInfo {
   created_by: string;
   created_on_millis: string;
+  updated_by: string;
   updated_on_millis: string;
 }
 
 export interface KintaroCollection {
   collection_id: string;
   db_id: string;
-  mod_info: KintaroModified;
+  mod_info: ModInfo;
   published_document_count: 1;
   repo_id: string;
   schema_id: string;
@@ -42,7 +43,7 @@ export interface KintaroDocument {
   document_state: string;
   locale: string;
   metadata_json: string;
-  mod_info: KintaroModified;
+  mod_info: ModInfo;
   nested_metadata_json: string;
   never_published: boolean;
   project_id: string;
