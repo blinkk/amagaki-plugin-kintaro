@@ -30,7 +30,7 @@ export class WebhookSimulator {
 
   static getCloudFunction(options: WebhookSimulatorOptions) {
     const simulator = new WebhookSimulator(options);
-    return simulator.syncKintaroRepoStatus;
+    return simulator.syncKintaroRepoStatus.bind(simulator);
   }
 
   async syncKintaroRepoStatus(req: functions.Request, res: functions.Response) {
