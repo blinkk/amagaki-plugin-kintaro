@@ -183,10 +183,15 @@ import {WebhookSimulator} from '@amagaki/amagaki-plugin-kintaro';
 import functions from '@google-cloud/functions-framework';
 
 functions.http('syncKintaroRepoStatus', WebhookSimulator.getCloudFunction({
+  // `branchName` to use when submitting the Cloud Build.
   branchName: '<string>',
+  // GCP project that owns the Cloud Build trigger and Datastore instance. This should usually be omitted.
   gcpProject: '<string | undefined>',
+  // Kintaro "project" ID. Same as a Kintaro "workspace". Should be left as `undefined` to trigger only published content.
   kintaroProjectId: '<string | undefined>',
+  // Kintaro "repo" ID. Same as a Kintaro "site".
   kintaroRepoId: '<string>',
+  // UUID of the Cloud Build trigger.
   buildTriggerId: '<string>',
 }));
 ```
@@ -198,7 +203,7 @@ functions.http('syncKintaroRepoStatus', WebhookSimulator.getCloudFunction({
   "main": "index.js",
   "type": "module",
   "dependencies": {
-    "@amagaki/amagaki-plugin-kintaro": "^2.0.0",
+    "@amagaki/amagaki-plugin-kintaro": "^2.0.1",
     "@google-cloud/functions-framework": "^3.0.0",
   }
 }
@@ -214,6 +219,12 @@ gcloud functions deploy \
 ```
 
 4. Create a Cloud Scheduler task that runs the function every minute.
+
+Configure this from the Cloud Scheduler page:
+
+```
+https://console.cloud.google.com/cloudscheduler?project=<GCP PROJECT ID>
+```
 
 Use the following configuration:
 
