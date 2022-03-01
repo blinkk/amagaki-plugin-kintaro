@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.0.1](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v2.0.0...v2.0.1) (2022-03-01)
+
+
+### Bug Fixes
+
+* scoping issue with cloud function ([06741bd](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/06741bd850ac4d8971757123f6bad882767cc4a9))
+
 ## [2.0.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.8.1...v2.0.0) (2022-03-01)
 
 
