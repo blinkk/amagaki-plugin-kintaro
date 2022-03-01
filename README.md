@@ -183,12 +183,12 @@ import {WebhookSimulator} from '@amagaki/amagaki-plugin-kintaro';
 import functions from '@google-cloud/functions-framework';
 
 functions.http('syncKintaroRepoStatus', WebhookSimulator.getCloudFunction({
-  branchName: '<string>';
-  gcpProject: '<string | undefined>';
-  kintaroProjectId: '<string | undefined>';
-  kintaroRepoId: '<string>';
-  buildTriggerId: '<string>';
-})
+  branchName: '<string>',
+  gcpProject: '<string | undefined>',
+  kintaroProjectId: '<string | undefined>',
+  kintaroRepoId: '<string>',
+  buildTriggerId: '<string>',
+}));
 ```
 
 2. Create a `apps/kintaro-webhook-simulator/package.json`:
@@ -198,7 +198,7 @@ functions.http('syncKintaroRepoStatus', WebhookSimulator.getCloudFunction({
   "main": "index.js",
   "type": "module",
   "dependencies": {
-    "@amagaki/amagaki-plugin-kintaro": "^1.8.1",
+    "@amagaki/amagaki-plugin-kintaro": "^2.0.0",
     "@google-cloud/functions-framework": "^3.0.0",
   }
 }
