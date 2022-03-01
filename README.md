@@ -204,7 +204,7 @@ functions.http('syncKintaroRepoStatus', WebhookSimulator.getCloudFunction({
   "type": "module",
   "dependencies": {
     "@amagaki/amagaki-plugin-kintaro": "^2.0.1",
-    "@google-cloud/functions-framework": "^3.0.0",
+    "@google-cloud/functions-framework": "^3.0.0"
   }
 }
 ```
