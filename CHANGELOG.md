@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.8.1...v2.0.0) (2022-03-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* add webhook simulator
+
+### Features
+
+* add webhook simulator ([b539ec9](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/b539ec90038d288083509875a2e6903b2ebb57e0))
+
 ### [1.8.1](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v1.8.0...v1.8.1) (2022-01-17)
 
 
