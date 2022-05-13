@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v2.0.1...v2.1.0) (2022-05-13)
+
+
+### Features
+
+* add ability to trigger builds on content edit ([cc03832](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/cc03832ed56e77eaa4150df80af417989839f8b5))
+
 ### [2.0.1](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v2.0.0...v2.0.1) (2022-03-01)
 
 
