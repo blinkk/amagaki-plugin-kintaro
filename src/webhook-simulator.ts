@@ -4,6 +4,7 @@ import {KintaroPlugin} from '.';
 import {ModInfo} from '.';
 import {Pod} from '@amagaki/amagaki';
 import functions from '@google-cloud/functions-framework';
+import e from 'express';
 
 export interface WebhookSimulatorOptions {
   branchName?: string;
@@ -44,7 +45,17 @@ export class WebhookSimulator {
       repo_id: plugin.repoId,
     });
     const publishModInfo = resp.data.publish_mod_info as ModInfo;
-    console.log('Successfully fetched from Kintaro.');
+    console.log('Successfully fetched repo from Kintaro.');
+
+    let projectModInfo;
+    if (this.kintaroProjectId) {
+      const projectResp = await client.projects.getProject({
+        project_id: plugin.projectId,
+        repo_id: plugin.repoId,
+      });
+      projectModInfo = projectResp.data.mod_info as ModInfo;
+      console.log('Successfully fetched project from Kintaro.');
+    }
 
     const datastore = new Datastore({
       projectId: this.gcpProject,
@@ -53,9 +64,19 @@ export class WebhookSimulator {
     const [ent] = await datastore.get(key);
 
     if (
-      ent?.publishModInfo.updated_on_millis >= publishModInfo.updated_on_millis
+      !ent ||
+      ent?.publishModInfo.updated_on_millis >=
+        publishModInfo.updated_on_millis ||
+      (projectModInfo &&
+        ent?.projectModInfo?.updated_on_millis >=
+          projectModInfo?.updated_on_millis)
     ) {
-      const message = `No changes; last update was: ${publishModInfo.updated_on_millis}.`;
+      let message;
+      if (projectModInfo) {
+        message = `No changes; last update was: ${publishModInfo.updated_on_millis} (publish) and ${projectModInfo?.updated_on_millis} (project).`;
+      } else {
+        message = `No changes; last update was: ${publishModInfo.updated_on_millis}.`;
+      }
       console.log(message);
       res.send(message);
       return;
@@ -78,6 +99,7 @@ export class WebhookSimulator {
       key: key,
       data: {
         publishModInfo: publishModInfo,
+        projectModInfo: projectModInfo,
       },
     });
 
