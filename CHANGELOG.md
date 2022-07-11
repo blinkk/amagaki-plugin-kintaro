@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.1.1](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v2.1.0...v2.1.1) (2022-07-11)
+
+
+### Bug Fixes
+
+* move Amagaki to devDependencies ([45cddf3](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/45cddf32d58335acca752cabf05247c866a0ff2b))
+
 ## [2.1.0](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v2.0.1...v2.1.0) (2022-05-13)
 
 
