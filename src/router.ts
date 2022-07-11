@@ -103,7 +103,7 @@ export class KintaroRouteProvider extends RouteProvider {
 }
 
 export class KintaroRoute extends Route {
-  fields?: Record<string, any>;
+  fields: Record<string, any>;
   options: KintaroRouteOptions;
   routeDoc: KintaroRouteDocument;
 
@@ -114,7 +114,7 @@ export class KintaroRoute extends Route {
     super(provider);
     this.provider = provider;
     this.options = options;
-    this.fields = options.fields;
+    this.fields = options.fields ?? {};
     this.routeDoc = new KintaroRouteDocument(this.provider.pod, {
       document: options.document,
       pathFormat: options.pathFormat,
