@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.1.2](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v2.1.1...v2.1.2) (2022-07-11)
+
+
+### Bug Fixes
+
+* route field initialization ([8c6ef71](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/8c6ef715a91d7204fc30badeabbf3acbe47d7cfe))
+
 ### [2.1.1](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v2.1.0...v2.1.1) (2022-07-11)
 
 
