@@ -100,7 +100,7 @@ export const processDocument = async (
     };
   }
 
-  const locales = data.snapshot_locales;
+  const locales = data.translation_locales;
 
   const resps: any = [];
   await async.mapLimit(
