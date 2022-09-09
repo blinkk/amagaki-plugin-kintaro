@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.1.3](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v2.1.2...v2.1.3) (2022-09-09)
+
+
+### Bug Fixes
+
+* when translation locales do not match workspace locales ([e017110](https://www.github.com/blinkk/amagaki-plugin-kintaro/commit/e017110f93859c275769f0bbe9250ff56eef9813))
+
 ### [2.1.2](https://www.github.com/blinkk/amagaki-plugin-kintaro/compare/v2.1.1...v2.1.2) (2022-07-11)
 
 
